@@ -8,17 +8,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Translatable\HasTranslations;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Client extends Model implements JWTSubject
+class Client extends Authenticatable implements JWTSubject
 {
-    use HasFactory,SoftDeletes,HasApiTokens,HasTranslations;
+    use HasFactory,SoftDeletes,HasApiTokens;
+    protected $table = 'clients';
+
     protected $guarded = [];
 
 
     public function getJWTIdentifier()
     {
-        return $this->getKey();
+        return (string) $this->getKey();  // Ensure it returns a string, typically the user ID
     }
+    
+
     public function getJWTCustomClaims()
     {
         return [

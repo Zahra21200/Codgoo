@@ -3,7 +3,7 @@
 namespace App\Repositories\Client;
 
 use App\Models\Client;
-use App\Repositories\Interfaces\ClientRepositoryInterface;
+use App\Repositories\Client\ClientRepositoryInterface;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Hash;
 

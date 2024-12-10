@@ -18,7 +18,9 @@ Route::prefix('client')->group(function() {
     Route::post('forgot-password', [ClientAuthController::class, 'forgotPassword']);
 });
 
-
+Route::get('/test', function () {
+    return response()->json(['message' => 'API working']);
+});
 // Route::post('client/login', [AuthController::class, 'clientLogin']);
 // Route::post('client/register', [AuthController::class, 'clientRegister']);
 // Route::post('client/logout', [AuthController::class, 'clientLogout']);

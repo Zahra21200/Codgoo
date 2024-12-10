@@ -3,7 +3,7 @@
 namespace App\Repositories\Admin;
 
 use App\Models\Admin;
-use App\Repositories\Interfaces\AdminRepositoryInterface;
+use App\Repositories\Admin\AdminRepositoryInterface;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Hash;
 

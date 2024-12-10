@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens; // For Sanctum
-use Spatie\Translatable\HasTranslations; // For Translatable
+use Laravel\Sanctum\HasApiTokens; 
+use Spatie\Translatable\HasTranslations; 
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Admin extends Model implements JWTSubject
+
+class Admin extends Authenticatable implements JWTSubject
 {
-    use HasFactory, SoftDeletes, HasApiTokens, HasTranslations, Notifiable;
+    use HasFactory, SoftDeletes, HasApiTokens, Notifiable;
 
     protected $guarded = [];
+    protected $table = 'admins';
 
     public function getJWTIdentifier()
     {

@@ -10,4 +10,14 @@ class Product extends Model
     use HasFactory;
     protected $guarded = [];
 
+
+    public function media() 
+    {
+        return $this->hasMany(ProductMedia::class);
+    }
+    
+    // public function addons() 
+    // {
+    //     return $this->belongsToMany(Addon::class, 'product_addons');
+    // }
 }

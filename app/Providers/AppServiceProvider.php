@@ -9,6 +9,9 @@ use App\Repositories\Admin\AdminRepositoryInterface;
 use App\Repositories\Admin\AdminRepository;
 use App\Repositories\Client\ClientRepositoryInterface;
 use App\Repositories\Client\ClientRepository;
+use App\Repositories\ProductMediaRepositoryInterface;
+use App\Repositories\ProductMediaRepository;
+
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -20,8 +23,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(AdminRepositoryInterface::class, AdminRepository::class);
         $this->app->bind(ClientRepositoryInterface::class, ClientRepository::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
-
-
+        $this->app->bind(ProductMediaRepositoryInterface::class, ProductMediaRepository::class);
     }
 
     /**

@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('product_media', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->string('file_path');  
+            $table->enum('type', ['image', 'video']);
             $table->timestamps();
+
         });
     }
 

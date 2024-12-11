@@ -4,6 +4,8 @@ use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Client\ClientAuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductMediaController;
+use App\Http\Controllers\AddonController;
+use App\Http\Controllers\ProductAddonController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function() {
@@ -20,13 +22,13 @@ Route::prefix('client')->group(function() {
     Route::post('forgot-password', [ClientAuthController::class, 'forgotPassword']);
 });
 
-
-Route::middleware('auth:admin')->group(function () {
-    Route::apiResource('products', ProductController::class);
-});
-
 Route::middleware('auth:admin')->group(function () {
     Route::apiResource('product-media', ProductMediaController::class);
     Route::get('specific-product-media/{productId}', [ProductMediaController::class, 'getAllMediaForProduct']);
+    Route::apiResource('addons', AddonController::class);
+    Route::apiResource('products', ProductController::class);
+    Route::apiResource('product-addons', ProductAddonController::class);
+
+
 
 });

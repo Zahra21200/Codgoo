@@ -16,8 +16,9 @@ class Product extends Model
         return $this->hasMany(ProductMedia::class);
     }
     
-    // public function addons() 
-    // {
-    //     return $this->belongsToMany(Addon::class, 'product_addons');
-    // }
+    public function addons()
+    {
+        return $this->hasMany(ProductAddon::class);
+    }
+    
 }

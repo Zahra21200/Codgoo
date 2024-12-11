@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Repositories;
-namespace App\Repositories;
 
 use App\Models\ProductMedia;
 use Illuminate\Support\Facades\Storage;

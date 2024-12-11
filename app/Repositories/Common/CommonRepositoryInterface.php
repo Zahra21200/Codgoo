@@ -11,6 +11,6 @@ interface CommonRepositoryInterface
     public function store(Request $request);
     public function update(int $id, Request $request);
     public function delete(int $id): bool;
-    public function show(int $id, array $relations = []): JsonResource;
+    public function show(int $id, array $relations = []);
     // public function respond($data, bool $success = true);
 }

@@ -125,29 +125,28 @@ class CommonRepository
 
 
 
-
-
     public function update(int $id, Request $request)
-    {
+{
+    $model = $this->getModel()->find($id);
 
-        $requestClass = static::REQUEST;
-        $customeRequest = app($requestClass);
-        $customeRequest->replace($request->all());
-        $validatedData = $customeRequest->validated();
-
-        $model = $this->getModel()->find($id);
-        if(!$model){
-            return response()->json([
-                'status' => false,
-                'message' =>  __('messages.not_found'),
-            ]);
-
-            return ResponseHelper::error( __('messages.not_found'),[] , 404);
-
-        }
-        $model->update($validatedData);
-        return ResponseHelper::success(new (static::RESOURCE)($model), __('messages.update_success'));
+    if (!$model) {
+        return response()->json([
+            'status' => false,
+            'message' => __('messages.not_found'),
+        ], 404);
     }
+
+    // Use the specific request class to validate and extract data
+    $requestClass = static::REQUEST;
+    $customRequest = app($requestClass);
+    $customRequest->replace($request->all());
+    $validatedData = $customRequest->validated();
+
+    $model->update($validatedData);
+
+    return ResponseHelper::success(new (static::RESOURCE)($model), __('messages.update_success'));
+}
+
 
 
 
@@ -186,42 +185,36 @@ class CommonRepository
 
 
 
+    public function show(int $id, array $relations = [])
+    {
+        $model = $this->getModel()->with($relations)->find($id);
+        if(!$model){
+            return response()->json([
+                'status' => false,
+                'message' =>  __('messages.not_found'),
+            ]);
+        }
+
+
+        return response()->json([
+            'message' => null,
+            'success' => true,
+            new (static::RESOURCE)($model)
+        ], 200);
+    }
     // public function show(int $id, array $relations = []): JsonResource
     // {
     //     $model = $this->getModel()->with($relations)->find($id);
-    //     if(!$model){
-    //         return response()->json([
-    //             'status' => false,
-    //             'message' =>  __('messages.not_found'),
-    //         ]);
+    
+    //     if (!$model) {
+    //         abort(404, __('messages.not_found')); // Use Laravel's abort function to return a JSON response for APIs
     //     }
-
-
-    //     return response()->json([
-    //         'message' => null,
-    //         'success' => true,
-    //         new (static::RESOURCE)($model)
-    //     ], 200);
+    
+    //     $resourceClass = static::RESOURCE;
+    //     return new $resourceClass($model);
     // }
-    public function show(int $id, array $relations = []): JsonResource
-    {
-        $model = $this->getModel()->with($relations)->find($id);
-
-        if (!$model) {
-            abort(404, __('messages.not_found')); // التعامل مع الحالة عند عدم العثور على السجل
-        }
-
-        // إنشاء كائن JsonResource باستخدام RESOURCE الثابت
-        $resourceClass = static::RESOURCE;
-        return new $resourceClass($model);
-
-      //         if(!$model){
-//             return ResponseHelper::error( __('messages.not_found'),[] , 404);
-//         }
-
-//         return ResponseHelper::success( new (static::RESOURCE)($model));
-//     }
-    }
+    
+    
 
 
 

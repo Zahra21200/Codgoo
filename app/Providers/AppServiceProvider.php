@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Repositories\AddonRepository;
+use App\Repositories\AddonRepositoryInterface;
+use App\Repositories\ProductAddonRepository;
+use App\Repositories\ProductAddonRepositoryInterface;
 use App\Repositories\ProductRepository;
 use App\Repositories\ProductRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +28,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ClientRepositoryInterface::class, ClientRepository::class);
         $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
         $this->app->bind(ProductMediaRepositoryInterface::class, ProductMediaRepository::class);
+        $this->app->bind(AddonRepositoryInterface::class, AddonRepository::class);
+        $this->app->bind(ProductAddonRepositoryInterface::class, ProductAddonRepository::class);
+
     }
 
     /**

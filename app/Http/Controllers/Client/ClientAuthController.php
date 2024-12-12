@@ -31,7 +31,7 @@ class ClientAuthController extends Controller
          $validator = Validator::make($request->all(), [
              'phone' => 'required|unique:clients,phone',
              'password' => 'required|min:6|max:255',
-             'username' => 'required|max:255',
+             'username' => 'required|unique:clients|max:255',
              'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate photo
              'company_name' => 'nullable|string|max:255',
              'website' => 'nullable|url|max:255',

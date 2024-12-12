@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Illuminate\Support\Facades\Auth;
+use App\Services\ImageService;
 
 
 class ClientAuthController extends Controller
@@ -26,68 +27,68 @@ class ClientAuthController extends Controller
 
      // Client Registration
      public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required|unique:clients,phone',
-            'password' => 'required|min:6|max:255',
-            'username' => 'required|max:255',
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate photo
-            'company_name' => 'nullable|string|max:255',
-            'website' => 'nullable|url|max:255',
-            'address' => 'nullable|string|max:255',
-            'city' => 'nullable|string|max:255',
-            'country' => 'nullable|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                "status" => false,
-                'code' => 402,
-                'message' => $validator->errors()->first(),
-                'data' => null,
-            ], 402);
-        }
-
-        // Handle file upload
-        $photoPath = null;
-        if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('client_photos', 'public'); // Store the photo in the public disk
-        }
-
-        // Create the client record
-        $client = Client::create([
-            "username" => $request->username,
-            "phone" => $request->phone,
-            "password" => Hash::make($request->password),
-            'name' => $request->name,
-            'email' => $request->email,
-            'photo' => $photoPath, // Save the photo path in the database
-            'company_name' => $request->company_name,
-            'website' => $request->website,
-            'address' => $request->address,
-            'city' => $request->city,
-            'country' => $request->country,
-        ]);
-
-        return response()->json([
-            'status' => true,
-            'code' => 200,
-            'message' => "Client account created successfully",
-            'data' => [
-                'id' => $client->id,
-                'username' => $client->username,
-                'phone' => $client->phone,
-                'email' => $client->email,
-                'name' => $client->name,
-                'photo' => $photoPath ? asset('storage/' . $photoPath) : null, // Return full URL of the photo
-                'company_name' => $client->company_name,
-                'website' => $client->website,
-                'address' => $client->address,
-                'city' => $client->city,
-                'country' => $client->country,
-            ],
-        ], 200);
-    }
+     {
+         $validator = Validator::make($request->all(), [
+             'phone' => 'required|unique:clients,phone',
+             'password' => 'required|min:6|max:255',
+             'username' => 'required|max:255',
+             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Validate photo
+             'company_name' => 'nullable|string|max:255',
+             'website' => 'nullable|url|max:255',
+             'address' => 'nullable|string|max:255',
+             'city' => 'nullable|string|max:255',
+             'country' => 'nullable|string|max:255',
+         ]);
+     
+         if ($validator->fails()) {
+             return response()->json([
+                 "status" => false,
+                 'code' => 402,
+                 'message' => $validator->errors()->first(),
+                 'data' => null,
+             ], 402);
+         }
+     
+         // Use ImageService to handle file upload
+         $photoPath = $request->hasFile('photo') 
+             ? ImageService::upload($request->file('photo'), 'client_photos')
+             : null;
+     
+         // Create the client record
+         $client = Client::create([
+             "username" => $request->username,
+             "phone" => $request->phone,
+             "password" => Hash::make($request->password),
+             'name' => $request->name,
+             'email' => $request->email,
+             'photo' => $photoPath, // Save the photo path in the database
+             'company_name' => $request->company_name,
+             'website' => $request->website,
+             'address' => $request->address,
+             'city' => $request->city,
+             'country' => $request->country,
+         ]);
+     
+         return response()->json([
+             'status' => true,
+             'code' => 200,
+             'message' => "Client account created successfully",
+             'data' => [
+                 'id' => $client->id,
+                 'username' => $client->username,
+                 'phone' => $client->phone,
+                 'email' => $client->email,
+                 'name' => $client->name,
+                 'photo' => $photoPath ? asset($photoPath) : null, // Use ImageService result
+                 'company_name' => $client->company_name,
+                 'website' => $client->website,
+                 'address' => $client->address,
+                 'city' => $client->city,
+                 'country' => $client->country,
+             ],
+         ], 200);
+     }
+     
 
 
 

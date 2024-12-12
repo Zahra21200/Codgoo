@@ -13,7 +13,16 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->nullable()->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->decimal('price', 10, 2)->nullable();  // Set by admin only
+            $table->text('note')->nullable();
+            $table->enum('status', ['approved', 'not_approved', 'canceled'])->default('not_approved');
+            $table->unsignedBigInteger('created_by_id');
+            $table->string('created_by_type');       
             $table->timestamps();
+
         });
     }
 

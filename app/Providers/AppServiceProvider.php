@@ -15,6 +15,8 @@ use App\Repositories\Client\ClientRepositoryInterface;
 use App\Repositories\Client\ClientRepository;
 use App\Repositories\ProductMediaRepositoryInterface;
 use App\Repositories\ProductMediaRepository;
+use App\Repositories\ProjectRepositoryInterface;
+use App\Repositories\ProjectRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +32,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductMediaRepositoryInterface::class, ProductMediaRepository::class);
         $this->app->bind(AddonRepositoryInterface::class, AddonRepository::class);
         $this->app->bind(ProductAddonRepositoryInterface::class, ProductAddonRepository::class);
+        $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
+
 
     }
 

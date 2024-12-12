@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductMediaController;
 use App\Http\Controllers\AddonController;
 use App\Http\Controllers\ProductAddonController;
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin')->group(function() {
@@ -28,7 +29,15 @@ Route::middleware('auth:admin')->group(function () {
     Route::apiResource('addons', AddonController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('product-addons', ProductAddonController::class);
+    Route::apiResource('projects', ProjectController::class);
 
+
+});
+
+
+Route::middleware('auth:client')->group(function () {
+
+    // Route::apiResource('projects', ProjectController::class);
 
 
 });

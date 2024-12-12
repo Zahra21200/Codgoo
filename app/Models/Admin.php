@@ -29,4 +29,9 @@ class Admin extends Authenticatable implements JWTSubject
             'type' => 'admin',
         ];
     }
+
+    public function projects()
+    {
+        return $this->morphMany(Project::class, 'created_by');
+    }
 }

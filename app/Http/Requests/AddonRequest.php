@@ -13,11 +13,19 @@ class AddonRequest extends FormRequest
 
     public function rules()
     {
-        return [
-            'name' => 'required|string|max:255',
+        $rules = [
             'icon' => 'nullable|file|mimes:jpg,jpeg,png,svg|max:2048',
             'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
         ];
+    
+        if ($this->isMethod('post')) {
+            $rules['name'] = 'required|string|max:255';
+        } elseif ($this->isMethod('put') || $this->isMethod('patch')) {
+            $rules['name'] = 'sometimes|required|string|max:255'; // Optional for updates
+        }
+    
+        return $rules;
     }
+    
 }

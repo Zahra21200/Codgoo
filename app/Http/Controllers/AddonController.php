@@ -47,33 +47,40 @@ class AddonController extends BaseController
         return new AddonResource($addon);
     }
 
-    public function update(Request $request, $id)
-    {
-        // Find the addon by ID
-        $addon = $this->repository->find($id);
+    // public function update(Request $request, $id)
+    // {
+    //     $addon = $this->repository->find($id);
+    
+    //     if (!$addon) {
+    //         return response()->json(['message' => 'Addon not found.'], 404);
+    //     }
+    
+    //     $validator = Validator::make($request->all(), (new \App\Http\Requests\AddonRequest())->rules());
+    
+    //     if ($validator->fails()) {
+    //         return response()->json(['errors' => $validator->errors()->toArray()], 422);
+    //     }
+    
+    //     $validatedData = $validator->validated();
+    
+    //     // Prepare files for update (icon in this case)
+    //     if ($request->hasFile('icon')) {
+    //         $validatedData['files'] = [
+    //             'icon' => [
+    //                 'file' => $request->file('icon'),
+    //                 'path' => $addon->icon, // Old icon path
+    //                 'directory' => 'product_media',
+    //             ],
+    //         ];
+    //     }
+    
+    //     // Call the common update method in the repository
+    //     $updatedAddon = $this->repository->update($id, $validatedData);
+    
+    //     return new AddonResource($updatedAddon);
+    // }
+    
+    
+    
 
-        if (!$addon) {
-            return response()->json(['message' => 'Addon not found.'], 404);
-        }
-
-        // Validate the request data
-        $validator = Validator::make($request->all(), (new \App\Http\Requests\AddonRequest())->rules());
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()->toArray()], 422);
-        }
-
-        $validatedData = $validator->validated();
-
-        // Handle image update if an icon is provided
-        if ($request->hasFile('icon')) {
-            $iconPath = ImageService::update($request->file('icon'), $addon->icon, 'product_media');
-            $validatedData['icon'] = $iconPath;
-        }
-
-        // Update the addon using the repository
-        $updatedAddon = $this->repository->update($id, $validatedData);
-
-        return new AddonResource($updatedAddon);
-    }
 }

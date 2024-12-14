@@ -10,7 +10,7 @@ class AddonResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'icon' => $this->icon ? asset('storage/' . $this->icon) : null,
+            'icon' => $this->icon ? asset( $this->icon) : null,
             'name' => $this->name,
             'description' => $this->description,
             'price' => $this->price,

@@ -9,7 +9,7 @@ interface CommonRepositoryInterface
 {
     public function index(Request $request);
     public function store(Request $request);
-    public function update(int $id, Request $request);
+    public function update(int $id, array $request);
     public function delete(int $id): bool;
     public function show(int $id, array $relations = []);
     // public function respond($data, bool $success = true);

@@ -46,10 +46,14 @@ class BaseController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        return $this->repository->update($id,$request);
+{
+    $validatedData = $request->all(); // Convert the request to an array
 
-    }
+    $updatedModel = $this->repository->update($id, $validatedData);
+
+    return response()->json($updatedModel, 200);
+}
+
 
     /**
      * Remove the specified resource from storage.

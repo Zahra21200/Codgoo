@@ -77,31 +77,40 @@ class CommonRepository
 
 
     public function index(Request $request)
-    {
-        $query = $this->getModel()
-            ->with($this->getRelations())
-            ->where($this->getFilters());
-    
-        // Apply sorting
-        foreach ($this->getSort() as $sort) {
-            $query->orderBy($sort['sort'], $sort['order']);
-        }
-    
-        $perPage = $request->input('per_page', 10);  // Default to 10
-        $paginated = $query->paginate($perPage)->appends($request->query());
-    
-        // Customize the pagination response
-        $customPagination = [
-            'data'     => $paginated->items(),
-            'from'     => $paginated->firstItem(),
-            'per_page' => $paginated->perPage(),
-            'to'       => $paginated->lastItem(),
-            'total'    => $paginated->total(),
-            'count'    =>$paginated->count(),
-        ];
-    
-        return ResponseHelper::success($customPagination, __('messages.list_success'));
+{
+    $query = $this->getModel()
+        ->with($this->getRelations())
+        ->where($this->getFilters());
+
+    // Apply sorting
+    foreach ($this->getSort() as $sort) {
+        $query->orderBy($sort['sort'], $sort['order']);
     }
+
+    $perPage = $request->input('per_page', 10); // Default to 10
+    $paginated = $query->paginate($perPage)->appends($request->query());
+
+    // Use the resource class defined in the repository
+    $resourceClass = static::RESOURCE;
+
+    // Transform the paginated data using the resource class
+    $data = $paginated->getCollection()->map(function ($item) use ($resourceClass) {
+        return new $resourceClass($item);
+    });
+
+    // Create the custom pagination structure
+    $customPagination = [
+        'data'     => $data,
+        'from'     => $paginated->firstItem(),
+        'per_page' => $paginated->perPage(),
+        'to'       => $paginated->lastItem(),
+        'total'    => $paginated->total(),
+        'count'    => $paginated->count(),
+    ];
+
+    return ResponseHelper::success($customPagination, __('messages.list_success'));
+}
+
     
 
 
@@ -125,7 +134,7 @@ class CommonRepository
 
 
 
-    public function update(int $id, Request $request)
+    public function update(int $id, array $data)
 {
     $model = $this->getModel()->find($id);
 
@@ -136,17 +145,16 @@ class CommonRepository
         ], 404);
     }
 
-    // Use the specific request class to validate and extract data
-    $requestClass = static::REQUEST;
-    $customRequest = app($requestClass);
-    $customRequest->replace($request->all());
-    $validatedData = $customRequest->validated();
+    // Update the model
+    $model->update($data);
 
-    $model->update($validatedData);
+    // Use the RESOURCE constant to return the updated model
+    $resourceClass = static::RESOURCE;
 
-    return ResponseHelper::success(new (static::RESOURCE)($model), __('messages.update_success'));
+    return new $resourceClass($model->refresh());
 }
 
+    
 
 
 

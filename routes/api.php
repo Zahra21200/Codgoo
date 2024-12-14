@@ -29,7 +29,7 @@ Route::middleware('auth:admin')->group(function () {
     Route::apiResource('addons', AddonController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('product-addons', ProductAddonController::class);
-    Route::apiResource('projects', ProjectController::class);
+    // Route::apiResource('projects', ProjectController::class);
 
 
 });
@@ -37,7 +37,7 @@ Route::middleware('auth:admin')->group(function () {
 
 Route::middleware('auth:client')->group(function () {
 
-    // Route::apiResource('projects', ProjectController::class);
+    Route::apiResource('projects', ProjectController::class);
 
 
 });

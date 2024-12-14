@@ -16,6 +16,8 @@ class ProjectResource extends JsonResource
             'price' => $this->price,
             'note' => $this->note,
             'status' => $this->status,
+            'created_by_id' => $this->created_by_id,
+            'created_by_type' => $this->created_by_type,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

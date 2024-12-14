@@ -1,10 +1,10 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddonRequest;
 use App\Http\Resources\AddonResource;
 use App\Repositories\AddonRepositoryInterface;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -18,12 +18,11 @@ class AddonController extends BaseController
         $this->repository = $repository;
     }
 
-
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-           'name' => 'required|string|max:255',
-            'icon' => 'nullable|file|mimes:jpg,jpeg,png,svg|max:2048',
+            'name' => 'required|string|max:255',
+            'icon' => 'nullable|image|mimes:jpg,jpeg,png,svg|max:2048', // Use 'image' validation for icons
             'description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
         ]);
@@ -32,64 +31,49 @@ class AddonController extends BaseController
             return response()->json(['errors' => $validator->errors()->toArray()], 422);
         }
 
+        // Handle image upload
+        $iconPath = null;
         if ($request->hasFile('icon')) {
-            // تخزين الملف في مجلد product_media داخل storage/app/public
-            $filePath = $request->file('icon')->store('product_media', 'public');
-        } else {
-            // إذا لم يتم رفع أي ملف
-            return response()->json(['message' => 'No file uploaded.'], 400);
+            $iconPath = ImageService::upload($request->file('icon'), 'product_media');
         }
 
-        // إضافة المسار المحدث للملف إلى البيانات
-        $validatedData = $validator->validated(); // استخدمنا `validated()` للحصول على البيانات الموثقة
-        $validatedData['icon'] = $filePath;
+        // Add the uploaded icon path to the validated data
+        $validatedData = $validator->validated();
+        $validatedData['icon'] = $iconPath;
 
-        // إنشاء السجل باستخدام الـ repository
-        $productMedia = $this->repository->create($validatedData);
+        // Create the addon using the repository
+        $addon = $this->repository->create($validatedData);
 
-        // إرجاع استجابة باستخدام Resource
-        return new AddonResource($productMedia);
+        return new AddonResource($addon);
     }
 
     public function update(Request $request, $id)
-{
-    // Find the addon by ID
-    $addon = $this->repository->find($id);
+    {
+        // Find the addon by ID
+        $addon = $this->repository->find($id);
 
-    if (!$addon) {
-        return response()->json(['message' => 'Addon not found.'], 404);
-    }
-
-    // Validate the request data using AddonRequest's rules
-    $validator = Validator::make($request->all(), (new \App\Http\Requests\AddonRequest())->rules());
-
-    if ($validator->fails()) {
-        return response()->json(['errors' => $validator->errors()->toArray()], 422);
-    }
-
-    $validatedData = $validator->validated();
-
-    // Handle file upload if an icon is provided
-    if ($request->hasFile('icon')) {
-        // Delete the existing file if it exists
-        if ($addon->icon && file_exists(storage_path('app/public/' . $addon->icon))) {
-            unlink(storage_path('app/public/' . $addon->icon));
+        if (!$addon) {
+            return response()->json(['message' => 'Addon not found.'], 404);
         }
 
-        // Store the new file and update the validated data
-        $filePath = $request->file('icon')->store('product_media', 'public');
-        $validatedData['icon'] = $filePath;
+        // Validate the request data
+        $validator = Validator::make($request->all(), (new \App\Http\Requests\AddonRequest())->rules());
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()->toArray()], 422);
+        }
+
+        $validatedData = $validator->validated();
+
+        // Handle image update if an icon is provided
+        if ($request->hasFile('icon')) {
+            $iconPath = ImageService::update($request->file('icon'), $addon->icon, 'product_media');
+            $validatedData['icon'] = $iconPath;
+        }
+
+        // Update the addon using the repository
+        $updatedAddon = $this->repository->update($id, $validatedData);
+
+        return new AddonResource($updatedAddon);
     }
-
-    // Pass the validated data to the repository's update method
-    $updatedAddon = $this->repository->update($id, $validatedData);
-
-    // Return the updated resource
-    return new AddonResource($updatedAddon);
-}
-
-
-    
-    
-
 }
